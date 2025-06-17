@@ -6,24 +6,20 @@ interface ProjectSlideshowProps {
 }
 
 const projectData = {
-  gojo: {
+  'GOJO': {
     title: 'GOJO',
     images: [
       'pending_properties.png',
       'home.png',
       'property_detail.png',
-      'add_property.png',
-      'admin_chat.png',
-      'billing.png',
+      'property_location.png',
       'notification.png',
       'search.png',
       'setting.png',
-      'property_location.png',
-      'gojo_account.png',
       'insomnia_workspace.png'
     ]
   },
-  'movie-chief': {
+  'Movie Chief': {
     title: 'Movie Chief',
     images: [
       'Home Page.png',
@@ -31,7 +27,7 @@ const projectData = {
       'Tv Shows Page.png'
     ]
   },
-  ecommerce: {
+  'E-Commerce': {
     title: 'E-commerce',
     images: [
       'Landing Page.png',
@@ -40,7 +36,7 @@ const projectData = {
       'finalize order.png'
     ]
   },
-  notes: {
+  'Notes': {
     title: 'Notes',
     images: [
       'home_page.png',
@@ -50,96 +46,97 @@ const projectData = {
       'splash_page.png'
     ]
   },
-  poker: {
+  'Poker': {
     title: 'Poker',
     images: [
       'starting screen.png',
       'player calls.png',
-      'player raise.png',
       'player folded.png',
+      'player raise.png',
       'result screen.png'
+    ]
+  },
+  'Calorie Tracker': {
+    title: 'Calorie Tracker',
+    images: [
+      'Start Page.png',
+      'Search Food.png',
+      'Added Items.png',
+      'Exported Diet.png'
     ]
   }
 }
 
-const ProjectSlideshow = ({ projectId, onClose }: ProjectSlideshowProps) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+export default function ProjectSlideshow({ projectId, onClose }: ProjectSlideshowProps) {
   const project = projectData[projectId as keyof typeof projectData]
+  const images = project.images
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft') handlePrevious()
-      if (e.key === 'ArrowRight') handleNext()
+      if (e.key === 'ArrowLeft') {
+        prevImage()
+      } else if (e.key === 'ArrowRight') {
+        nextImage()
+      } else if (e.key === 'Escape') {
+        onClose()
+      }
     }
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [onClose])
 
-  const handlePrevious = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? project.images.length - 1 : prev - 1
-    )
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
   }
 
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === project.images.length - 1 ? 0 : prev + 1
-    )
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
   }
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <button
-        onClick={onClose}
-        className="fixed top-4 right-4 md:top-8 md:right-8 text-white/80 hover:text-white z-50 bg-black/50 rounded-full p-2"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+      <div className="relative max-w-5xl w-full bg-gray-900/50 backdrop-blur-sm rounded-lg overflow-hidden">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-10 bg-black/50 rounded-full p-2"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-      <div className="relative w-full max-w-5xl mx-auto">
-        <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="relative aspect-video">
           <img
-            src={`/src/projects/${project.title}/${project.images[currentImageIndex]}`}
-            alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-            className="w-full h-full object-contain"
+            src={`/projects/${projectId}/${images[currentIndex]}`}
+            alt={`${project.title} - ${images[currentIndex]}`}
+            className="w-full h-full object-contain bg-gray-800"
           />
         </div>
 
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+        <div className="absolute left-0 right-0 bottom-0 p-4 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
           <button
-            onClick={handlePrevious}
-            className="p-2 bg-black/50 rounded-r-lg text-white/80 hover:text-white pointer-events-auto"
+            onClick={prevImage}
+            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
+          <span className="text-white text-sm">
+            {currentIndex + 1} / {images.length}
+          </span>
           <button
-            onClick={handleNext}
-            className="p-2 bg-black/50 rounded-l-lg text-white/80 hover:text-white pointer-events-auto"
+            onClick={nextImage}
+            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
-
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-          {project.images.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`w-2 h-2 rounded-full ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
-            />
-          ))}
-        </div>
       </div>
     </div>
   )
 }
-
-export default ProjectSlideshow
