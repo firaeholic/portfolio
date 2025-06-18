@@ -21,7 +21,7 @@ function ProjectCarousel({ projects, onProjectSelect }: ProjectCarouselProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   // Auto-scroll functionality
   useEffect(() => {
