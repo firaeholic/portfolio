@@ -64,6 +64,19 @@ const projectData = {
       'Added Items.png',
       'Exported Diet.png'
     ]
+  },
+  'Web Scraper': {
+    title: 'Web Scraper',
+    images: [
+      'original data.png',
+      'selection.png',
+      'scraping.png',
+      'finish scrape.png',
+      'scraped data.png',
+      'dashboard.png',
+      'search.png',
+      'exported.png'
+    ]
   }
 }
 

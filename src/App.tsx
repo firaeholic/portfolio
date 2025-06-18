@@ -1,7 +1,139 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import ProjectSlideshow from './components/ProjectSlideshow'
 import profileImage from './assets/prof.jpg'
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  extra: string;
+}
+
+interface ProjectCarouselProps {
+  projects: Project[];
+  onProjectSelect: (projectId: string) => void;
+}
+
+function ProjectCarousel({ projects, onProjectSelect }: ProjectCarouselProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const animationRef = useRef<number>();
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || isHovered || isDragging) return;
+
+    const scroll = () => {
+      if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+        container.scrollLeft = 0;
+      } else {
+        container.scrollLeft += 0.5; // Slow auto-scroll speed
+      }
+      animationRef.current = requestAnimationFrame(scroll);
+    };
+
+    animationRef.current = requestAnimationFrame(scroll);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isHovered, isDragging]);
+
+  // Mouse drag functionality
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    setIsHovered(false);
+  };
+
+  // Touch drag functionality for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!containerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  return (
+    <div 
+      className="relative overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div 
+        ref={containerRef}
+        className={`flex gap-6 overflow-x-auto scrollbar-hide pb-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Duplicate projects for seamless loop */}
+        {[...projects, ...projects].map((project, index) => (
+          <div
+            key={`${project.id}-${index}`}
+            onClick={() => !isDragging && onProjectSelect(project.id)}
+            className="group relative flex-shrink-0 w-80 overflow-hidden rounded-lg bg-gray-800/50 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-gray-800/70 cursor-pointer select-none"
+          >
+            <div className="aspect-video w-full rounded-lg bg-gray-700 overflow-hidden flex items-center justify-center">
+              <img 
+                src={`/projects/${project.id}/${project.description}.png`}
+                alt={`${project.name} - ${project.description}`}
+                className="w-full h-full object-contain bg-gray-800 pointer-events-none"
+                draggable={false}
+              />
+            </div>
+            <h3 className="mt-4 text-xl font-semibold">{project.name}</h3>
+            <p className="text-gray-400">{project.extra}</p>
+          </div>
+        ))}
+      </div>
+      
+      {/* Gradient overlays for visual effect */}
+      <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-gray-900 via-purple-900 to-transparent pointer-events-none z-10"></div>
+      <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-gray-900 via-purple-900 to-transparent pointer-events-none z-10"></div>
+    </div>
+  );
+}
 
 function App() {
   const projects = [
@@ -10,7 +142,8 @@ function App() {
     { id: 'E-Commerce', name: 'E-commerce', description: 'Landing Page', extra: "E-commerce Site" },
     { id: 'Notes', name: 'Notes', description: 'home_page', extra: "Note Taking Application" },
     { id: 'Poker', name: 'Poker', description: 'starting screen', extra: "Poker Game (Texas Hold'em)" },
-    { id: 'Calorie Tracker', name: 'Calorie Tracker', description: 'Added Items', extra: "Calorie Tracking Application (AI Integrated)" }
+    { id: 'Calorie Tracker', name: 'Calorie Tracker', description: 'Added Items', extra: "Calorie Tracking Application (AI Integrated)" },
+    { id: 'Web Scraper', name: 'Web Scraper', description: 'dashboard', extra: "Web Scraping Application (AI Integrated)" }
   ];
 
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -37,7 +170,7 @@ function App() {
   }, [])
 
   const skills = {
-    frontend: ['React.js', 'Vue.js', 'Angular.js', 'Next.js', 'Vite.js'],
+    frontend: ['React.js', 'Vue.js', 'Angular.js', 'Next.js', 'Vite.js', "Tailwind CSS"],
     backend: ['Node.js', '.NET', 'GoLang', 'Python', 'Docker', 'Kubernetes'],
     mobile: ['Flutter', 'Cypress', 'Storybook'],
     architecture: ['Clean Architecture', 'Model-View-Controller (MVC)'],
@@ -106,25 +239,7 @@ function App() {
       {/* Projects Section */}
       <section className="py-20 px-8" id="projects">
         <h2 className="text-4xl font-bold text-center mb-12">Projects</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              onClick={() => setSelectedProject(project.id)}
-              className="group relative overflow-hidden rounded-lg bg-gray-800/50 p-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-gray-800/70 cursor-pointer"
-            >
-              <div className="aspect-video w-full rounded-lg bg-gray-700 overflow-hidden flex items-center justify-center">
-                <img 
-                  src={`/projects/${project.id}/${project.description}.png`}
-                  alt={`${project.name} - ${project.description}`}
-                  className="w-full h-full object-contain bg-gray-800"
-                />
-              </div>
-              <h3 className="mt-4 text-xl font-semibold">{project.name}</h3>
-              <p className="text-gray-400">{project.extra}</p>
-            </div>
-          ))}
-        </div>
+        <ProjectCarousel projects={projects} onProjectSelect={setSelectedProject} />
       </section>
 
       {/* Skills Section */}

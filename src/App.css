@@ -46,6 +46,21 @@ html {
   border-radius: 5px;
 }
 
+/* Hide scrollbar for carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth carousel scrolling */
+.carousel-container {
+  scroll-behavior: smooth;
+}
+
 /* Project card hover effect */
 .group:hover .aspect-video {
   transform: scale(1.05);
