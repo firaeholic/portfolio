@@ -32,7 +32,7 @@ function ProjectCarousel({ projects, onProjectSelect }: ProjectCarouselProps) {
       if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
         container.scrollLeft = 0;
       } else {
-        container.scrollLeft += 0.5; // Slow auto-scroll speed
+        container.scrollLeft += 0.5;
       }
       animationRef.current = requestAnimationFrame(scroll);
     };
@@ -58,7 +58,7 @@ function ProjectCarousel({ projects, onProjectSelect }: ProjectCarouselProps) {
     if (!isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
+    const walk = (x - startX) * 2;
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -154,19 +154,33 @@ function App() {
       (entries) => {
         entries.forEach((entry) => {
           const index = parseInt(entry.target.getAttribute('data-index') || '0')
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => [...new Set([...prev, index])])
-          } else {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+            setVisibleSections((prev) => {
+              if (!prev.includes(index)) {
+                return [...prev, index]
+              }
+              return prev
+            })
+          } else if (!entry.isIntersecting || entry.intersectionRatio < 0.05) {
             setVisibleSections((prev) => prev.filter(i => i !== index))
           }
         })
       },
-      { threshold: 0.3 }
+      { 
+        threshold: [0, 0.05, 0.1, 0.5],
+        rootMargin: '50px 0px -50px 0px'
+      }
     )
 
-    document.querySelectorAll('[data-index]').forEach((el) => observer.observe(el))
+    // Add a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      document.querySelectorAll('[data-index]').forEach((el) => observer.observe(el))
+    }, 100)
 
-    return () => observer.disconnect()
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
+    }
   }, [])
 
   const skills = {
@@ -237,7 +251,7 @@ function App() {
       </section>
 
       {/* Projects Section */}
-      <section className="py-20 px-8" id="projects">
+      <section className="py-20 px-1" id="projects">
         <h2 className="text-4xl font-bold text-center mb-12">Projects</h2>
         <ProjectCarousel projects={projects} onProjectSelect={setSelectedProject} />
       </section>
