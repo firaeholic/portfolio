@@ -77,6 +77,15 @@ const projectData = {
       'search.png',
       'exported.png'
     ]
+  },
+  'Email Filter TG Bot': {
+    title: 'Email Filter TG Bot',
+    images: [
+      'start.jpg',
+      'add email.jpg',
+      'add filter.jpg',
+      'change mode.jpg'
+    ]
   }
 }
 

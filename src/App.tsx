@@ -197,7 +197,8 @@ function App() {
     { id: 'Notes', name: 'Notes', description: 'home_page', extra: "Note Taking Application" },
     { id: 'Poker', name: 'Poker', description: 'starting screen', extra: "Poker Game (Texas Hold'em)" },
     { id: 'Calorie Tracker', name: 'Calorie Tracker', description: 'Added Items', extra: "Calorie Tracking Application (AI Integrated)" },
-    { id: 'Web Scraper', name: 'Web Scraper', description: 'dashboard', extra: "Web Scraping Application (AI Integrated)" }
+    { id: 'Web Scraper', name: 'Web Scraper', description: 'dashboard', extra: "Web Scraping Application (AI Integrated)" },
+    { id: 'Email Filter TG Bot', name: 'Email Filter TG Bot', description: 'start', extra: "Telegram Bot for Email Filtering" }
   ];
 
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
