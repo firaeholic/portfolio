@@ -193,7 +193,7 @@ function App() {
   const projects = [
     { id: 'GOJO', name: 'GOJO', description: 'pending_properties', extra: "Booking and Accomodation System" },
     { id: 'Movie Chief', name: 'Movie Chief', description: 'Home Page', extra: "Movie and TV Shows Trailers and Information Site" },
-    { id: 'E-Commerce', name: 'E-commerce', description: 'Landing Page', extra: "E-commerce Site" },
+    { id: 'E-Commerce', name: 'E-commerce', description: 'Landing Page', extra: "Ecommerce Solution for Wholesalers and Retailers" },
     { id: 'Notes', name: 'Notes', description: 'home_page', extra: "Note Taking Application" },
     { id: 'Poker', name: 'Poker', description: 'starting screen', extra: "Poker Game (Texas Hold'em)" },
     { id: 'Calorie Tracker', name: 'Calorie Tracker', description: 'Added Items', extra: "Calorie Tracking Application (AI Integrated)" },
