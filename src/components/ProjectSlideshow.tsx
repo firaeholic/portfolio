@@ -81,10 +81,22 @@ const projectData = {
   'Email Filter TG Bot': {
     title: 'Email Filter TG Bot',
     images: [
-      'start.jpg',
-      'add email.jpg',
-      'add filter.jpg',
-      'change mode.jpg'
+      'start.png',
+      'add email.png',
+      'add filter.png',
+      'change mode.png'
+    ]
+  },
+  'StoreSphere': {
+    title: 'StoreSphere',
+    images: [
+      'landing.png',
+      'home page.png',
+      'stores view.png',
+      'store dashboard.png',
+      'admin dashboard main.png',
+      'admin dashboard user.png',
+      'payment.png'
     ]
   }
 }
