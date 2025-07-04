@@ -98,6 +98,18 @@ const projectData = {
       'admin dashboard user.png',
       'payment.png'
     ]
+  },
+  'LegalLens': {
+    title: 'LegalLens',
+    images: [
+      'home.png',
+      'home 2.png',
+      'in progress.png',
+      'analysis.png',
+      'summary.png',
+      'visual.png',
+      'visual 2.png'
+    ]
   }
 }
 
