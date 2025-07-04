@@ -117,6 +117,7 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
   const project = projectData[projectId as keyof typeof projectData]
   const images = project.images
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -134,11 +135,17 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
   }, [onClose])
 
   const prevImage = () => {
+    setIsLoading(true)
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
   }
 
   const nextImage = () => {
+    setIsLoading(true)
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+  }
+
+  const handleImageLoad = () => {
+    setIsLoading(false)
   }
 
   return (
@@ -154,17 +161,24 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
         </button>
 
         <div className="relative aspect-video">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-10">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+          )}
           <img
             src={`/projects/${projectId}/${images[currentIndex]}`}
             alt={`${project.title} - ${images[currentIndex]}`}
             className="w-full h-full object-contain bg-gray-800"
+            onLoad={handleImageLoad}
           />
         </div>
 
         <div className="absolute left-0 right-0 bottom-0 p-4 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
           <button
             onClick={prevImage}
-            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+            disabled={isLoading}
+            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -175,7 +189,8 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
           </span>
           <button
             onClick={nextImage}
-            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+            disabled={isLoading}
+            className="text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
