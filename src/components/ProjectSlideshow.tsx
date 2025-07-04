@@ -118,6 +118,42 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
   const images = project.images
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [preloadedImages, setPreloadedImages] = useState<Set<number>>(new Set([0]))
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
+  const [loadingTimeout, setLoadingTimeout] = useState<number | null>(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout)
+      }
+    }
+  }, [loadingTimeout])
+
+  // Preload adjacent images
+  useEffect(() => {
+    const preloadImage = (index: number) => {
+      if (index >= 0 && index < images.length && !preloadedImages.has(index) && !imageErrors.has(index)) {
+        const img = new Image()
+        img.onload = () => {
+          setPreloadedImages(prev => new Set([...prev, index]))
+        }
+        img.onerror = () => {
+          setImageErrors(prev => new Set([...prev, index]))
+        }
+        img.src = `/projects/${projectId}/${images[index]}`
+      }
+    }
+
+    // Preload current, next, and previous images
+    const prevIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1
+    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1
+    
+    preloadImage(currentIndex)
+    preloadImage(prevIndex)
+    preloadImage(nextIndex)
+  }, [currentIndex, images, projectId, preloadedImages, imageErrors])
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -134,18 +170,53 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [onClose])
 
+  const clearLoadingTimeout = () => {
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout)
+      setLoadingTimeout(null)
+    }
+  }
+
   const prevImage = () => {
-    setIsLoading(true)
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    clearLoadingTimeout()
+    const newIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1
+    if (!preloadedImages.has(newIndex) && !imageErrors.has(newIndex)) {
+      setIsLoading(true)
+      // Set timeout to prevent infinite loading (10 seconds)
+      const timeout = setTimeout(() => {
+        setIsLoading(false)
+        setImageErrors(prev => new Set([...prev, newIndex]))
+      }, 10000)
+      setLoadingTimeout(timeout)
+    }
+    setCurrentIndex(newIndex)
   }
 
   const nextImage = () => {
-    setIsLoading(true)
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    clearLoadingTimeout()
+    const newIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1
+    if (!preloadedImages.has(newIndex) && !imageErrors.has(newIndex)) {
+      setIsLoading(true)
+      // Set timeout to prevent infinite loading (10 seconds)
+      const timeout = setTimeout(() => {
+        setIsLoading(false)
+        setImageErrors(prev => new Set([...prev, newIndex]))
+      }, 10000)
+      setLoadingTimeout(timeout)
+    }
+    setCurrentIndex(newIndex)
   }
 
   const handleImageLoad = () => {
+    clearLoadingTimeout()
     setIsLoading(false)
+    setPreloadedImages(prev => new Set([...prev, currentIndex]))
+  }
+
+  const handleImageError = () => {
+    clearLoadingTimeout()
+    setIsLoading(false)
+    setImageErrors(prev => new Set([...prev, currentIndex]))
   }
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -172,12 +243,25 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
             </div>
           )}
-          <img
-            src={`/projects/${projectId}/${images[currentIndex]}`}
-            alt={`${project.title} - ${images[currentIndex]}`}
-            className="w-full h-full object-contain bg-gray-800"
-            onLoad={handleImageLoad}
-          />
+          {imageErrors.has(currentIndex) ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-800 text-gray-400">
+              <div className="text-center p-4">
+                <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p>Failed to load image</p>
+              </div>
+            </div>
+          ) : (
+            <img
+              src={`/projects/${projectId}/${images[currentIndex]}`}
+              alt={`${project.title} - ${images[currentIndex]}`}
+              className="w-full h-full object-contain bg-gray-800"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              loading="lazy"
+            />
+          )}
         </div>
 
         <div className="absolute left-0 right-0 bottom-0 p-4 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
