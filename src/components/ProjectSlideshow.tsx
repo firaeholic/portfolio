@@ -148,8 +148,14 @@ export default function ProjectSlideshow({ projectId, onClose }: ProjectSlidesho
     setIsLoading(false)
   }
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
   return (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4" onClick={handleBackdropClick}>
       <div className="relative max-w-5xl w-full bg-gray-900/50 backdrop-blur-sm rounded-lg overflow-hidden">
         <button
           onClick={onClose}
