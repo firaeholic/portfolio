@@ -200,7 +200,8 @@ function App() {
     { id: 'Web Scraper', name: 'Web Scraper', description: 'dashboard', extra: "Web Scraping Application (AI Integrated)" },
     { id: 'Email Filter TG Bot', name: 'Email Filter TG Bot', description: 'start', extra: "Telegram Bot for Email Filtering" },
     { id: 'StoreSphere', name: 'StoreSphere', description: 'landing', extra: "Multi-vendor E-commerce Platform" },
-    { id: 'LegalLens', name: 'LegalLens', description: 'home', extra: "Legal Document Analysis Platform (AI Powered)" }
+    { id: 'LegalLens', name: 'LegalLens', description: 'home', extra: "Legal Document Analysis Platform (AI Powered)" },
+    { id: 'MuseMap AI', name: 'MuseMap AI', description: 'home', extra: "AI-Powered Music and Lyrics Generation Platform" }
   ];
 
   const [selectedProject, setSelectedProject] = useState<string | null>(null);

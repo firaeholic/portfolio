@@ -110,6 +110,18 @@ const projectData = {
       'visual.png',
       'visual 2.png'
     ]
+  },
+  'MuseMap AI': {
+    title: 'MuseMap AI',
+    images: [
+      'home.png',
+      'home 2.png',
+      'create.png',
+      'generate.png',
+      'generating.png',
+      'gen music.png',
+      'gen lyrics.png'
+    ]
   }
 }
 
