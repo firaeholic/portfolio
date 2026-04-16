@@ -254,28 +254,28 @@ function App() {
     {
       title: 'Full Stack Developer',
       company: 'AppDiv System Development',
-      period: 'June, 2021 - August, 2021',
+      period: 'May, 2022 - July, 2022',
       description: 'Internship',
       skills: ['Angular', '.NET', 'MySQL', 'Clean Architecture']
     },
     {
       title: 'Full Stack Developer',
       company: 'AppDiv System Development',
-      period: 'August, 2021 - February, 2022',
+      period: 'September, 2022 - February, 2023',
       description: 'Remote Part-time. Worked on Inventory Management System and Time Tracking System.',
       skills: ['Angular', '.NET', 'MySQL', 'Clean Architecture']
     },
     {
       title: 'Backend Developer',
       company: 'Bithio ICT Systems',
-      period: 'May, 2023 - September, 2023',
+      period: 'March, 2023 - July, 2023',
       description: 'Developed a Real-time Collaborative System for a client.',
       skills: ['Node.js', 'PostgreSQL']
     },
     {
       title: 'Full Stack Developer',
       company: 'TapToSign',
-      period: 'September, 2024 - May, 2025',
+      period: 'November, 2024 - July, 2025',
       description: 'US based Car Dealeship website. Worked on creating new features, optimizing and fixing bugs.',
       skills: ['Preact', 'GoLang', 'MongoDB']
     }
