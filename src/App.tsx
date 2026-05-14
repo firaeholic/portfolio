@@ -554,7 +554,7 @@ function App() {
           
           <div className="text-center space-y-2">
             <div className="w-32 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
-            <p className="text-gray-500 text-sm">&copy; 2024 Franol Fekadu. All rights reserved.</p>
+            <p className="text-gray-500 text-sm">Designed by Franol Fekadu</p>
           </div>
         </div>
       </footer>
